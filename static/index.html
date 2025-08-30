@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marksheet Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6a11cb;
+      --secondary-color: #2575fc;
+      --background-color: #f3f4f6;
+      --card-background: #ffffff;
+      --text-color: #333;
+      --heading-color: #1a202c;
+      --border-color: #e2e8f0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    .container {
+      background-color: var(--card-background);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      padding: 3rem;
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #718096;
+      margin-bottom: 2rem;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    input[type="file"] {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem;
+      background-color: #f9fafb;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+    input[type="file"]:hover {
+      border-color: #a0aec0;
+    }
+    button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+    .loader {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--secondary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #results-container {
+      display: none;
+      text-align: left;
+    }
+    h2 {
+      font-size: 2rem;
+      color: var(--heading-color);
+      margin-bottom: 1.5rem;
+    }
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--heading-color);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-top: 2.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: #edf2f7;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+    }
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+    tr {
+      background-color: var(--card-background);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+    }
+    tr:hover {
+      transform: translateY(-2px);
+    }
+    .error {
+      color: #ef4444;
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      .container {
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+      }
+      h3 {
+        font-size: 1.1rem;
+      }
+      th, td {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📄 Marksheet Analyzer</h1>
+    <p>Upload a marksheet (PDF or image) to extract key details and confidence scores.</p>
+    
+    <form id="uploadForm" action="/analyze/" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" id="fileInput" required>
+      <button type="submit">Upload & Analyze</button>
+    </form>
+
+    <div class="loader" id="loader"></div>
+    <div id="results-container">
+      <h2>Analysis Results</h2>
+      
+      <h3>Candidate Details</h3>
+      <table id="candidateTable">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Subject Marks</h3>
+      <table id="subjectsTable">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Obtained Marks / Credits</th>
+            <th>Maximum Marks / Maximum Credits</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Overall Result</h3>
+      <table id="overallTable">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Issue Details</h3>
+      <table id="issueTable">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+            <th>Confidence</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+      
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("results-container").style.display = "none";
+      document.querySelector("#candidateTable tbody").innerHTML = "";
+      document.querySelector("#subjectsTable tbody").innerHTML = "";
+      document.querySelector("#overallTable tbody").innerHTML = "";
+      document.querySelector("#issueTable tbody").innerHTML = "";
+
+      try {
+        const response = await fetch("/analyze/", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Helper function to create table rows and handle confidence display
+        function renderTable(tableId, dataObject) {
+          const tableBody = document.querySelector(`#${tableId} tbody`);
+          for (const [field, obj] of Object.entries(dataObject)) {
+            const tr = document.createElement("tr");
+            const confidenceValue = obj.value === "N/A" ? "" : obj.confidence.toFixed(3);
+            tr.innerHTML = `<td>${field}</td><td>${obj.value}</td><td>${confidenceValue}</td>`;
+            tableBody.appendChild(tr);
+          }
+        }
+
+        // Render Candidate details
+        renderTable("candidateTable", data.candidate_details);
+
+        // Render Subjects with special handling
+        const subjectsTableBody = document.querySelector("#subjectsTable tbody");
+        data.subjects.forEach(sub => {
+          const tr = document.createElement("tr");
+          // Correctly reference the nested data
+          const obtainedConfidence = sub.obtained_marks.value === "N/A" ? "" : sub.obtained_marks.confidence.toFixed(3);
+          const maxConfidence = sub.max_marks.value === "N/A" ? "" : sub.max_marks.confidence.toFixed(3);
+          
+          // Use the obtained_marks and max_marks keys
+          tr.innerHTML = `<td>${sub.subject}</td>
+                          <td>${sub.obtained_marks.value}</td>
+                          <td>${sub.max_marks.value}</td>
+                          <td>${obtainedConfidence}</td>`;
+          subjectsTableBody.appendChild(tr);
+        });
+
+        // Render Overall Result
+        renderTable("overallTable", data.overall_result);
+        
+        // Render Issue Details
+        renderTable("issueTable", data.issue_details);
+
+      } catch (error) {
+        document.getElementById("results-container").innerHTML = `<p class="error">An error occurred: ${error.message}</p>`;
+        console.error("Error:", error);
+      } finally {
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("results-container").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
