@@ -5,7 +5,7 @@
 
 This project is designed to handle different marksheet formats, making it a versatile tool for data extraction.
 
----
+----
 
 ## Features
 - **Document Upload:** Supports uploading marksheets in PDF and common image formats.  
