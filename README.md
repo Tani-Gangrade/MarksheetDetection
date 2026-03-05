@@ -26,7 +26,7 @@ This project is designed to handle different marksheet formats, making it a vers
 - Tesseract OCR  
 - Poppler 
 
----
+----
 
 ## Access the Web App
 You can access the application here: [https://marksheetdetection.onrender.com]
