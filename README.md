@@ -28,14 +28,7 @@ This project is designed to handle different marksheet formats, making it a vers
 
 ----
 
-## Access the Web App
+## Access the Web App 
 You can access the application here: [https://marksheetdetection.onrender.com]
 
 ----
-
-### Installation
-
-1. **Clone the Repository**:
-```bash
-git clone https://github.com/Tani-Gangrade/MarksheetDetection.git
-cd MarksheetDetection
