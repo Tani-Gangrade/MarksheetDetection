@@ -18,16 +18,6 @@ This project is designed to handle different marksheet formats, making it a vers
 
 ----
 
-## How to Set Up the Project
-
-### Prerequisites
-- Python 3.8 or higher  
-- pip (Python package installer)  
-- Tesseract OCR  
-- Poppler 
-
-----
-
 ## Access the Web App
 You can access the application here: [https://marksheetdetection.onrender.com]
 
