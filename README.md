@@ -15,5 +15,5 @@ This project is designed to handle different marksheet formats, making it a vers
 - **Confidence Scores:** Provides a confidence score for each extracted data point, helping users gauge the accuracy of the results.  
 - **Modern UI:** Clean, responsive frontend built with HTML and CSS.
 - **Deployment:** Used Render to make it publicly testable.
-- 
+
 ----
